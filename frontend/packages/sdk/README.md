@@ -333,7 +333,7 @@ Each change is POSTed as JSON with headers `X-StellarCred-Event: claim_gained | 
 }
 ```
 
-Options: `wallets` (required, validated as Stellar Ed25519 keys), `claims`, `baseUrl` (indexer origin; falls back to `configure({ indexerUrl })` / `STELLARCRED_INDEXER_URL` / the SDK `baseUrl`), `apiKey` (sent as `X-API-Key` for indexers running with `API_KEY` set), `pollMs`, `resyncMs`, `emitInitialState` (also replay currently-active claims as `gained`), `requestTimeoutMs`, `onChange` / `onGained` / `onLost` / `onError`, `webhook`.
+Options: `wallets` (required, validated as Stellar Ed25519 keys), `claims`, `baseUrl` (indexer origin; falls back to `configure({ indexerUrl })` / `STELLARCRED_INDEXER_URL` / the SDK `baseUrl`), `apiKey` (sent as `Authorization: Bearer` for indexers running with `API_KEY` set), `pollMs`, `resyncMs`, `emitInitialState` (also replay currently-active claims as `gained`), `requestTimeoutMs`, `onChange` / `onGained` / `onLost` / `onError`, `webhook`.
 
 Notes:
 

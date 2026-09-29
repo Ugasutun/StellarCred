@@ -24,24 +24,11 @@ import {
   withRetry,
   type ClaimType,
 } from "./claims";
+import type { IndexerClaimRow } from "./indexer";
 
 // ---------------------------------------------------------------------------
 // Types
 // ---------------------------------------------------------------------------
-
-/** One row of the indexer's SerializedClaim wire shape (services/indexer/src/api.ts). */
-export interface IndexerClaimRow {
-  id: number;
-  wallet: string;
-  credential_type: string;
-  issuer: string;
-  verified_at: number;
-  expiry: number;
-  ledger_sequence: number;
-  threshold: number | null;
-  /** 0 or 1 — the indexer pins this as a number, not a boolean. */
-  revoked: number;
-}
 
 export type ClaimChangeKind = "gained" | "lost";
 
@@ -88,7 +75,7 @@ export interface SubscribeClaimsOptions {
    * the SDK `baseUrl`.
    */
   baseUrl?: string;
-  /** Sent as `X-API-Key` — only needed when the indexer runs with API_KEY set. */
+  /** Sent as `Authorization: Bearer` — only needed when the indexer runs with API_KEY set. */
   apiKey?: string;
   /** Feed poll interval. Default: 10_000 ms. */
   pollMs?: number;
@@ -127,7 +114,9 @@ async function fetchIndexerJson<T>(
   opts: { apiKey?: string; timeoutMs: number },
 ): Promise<T> {
   const headers: Record<string, string> = { Accept: "application/json" };
-  if (opts.apiKey) headers["X-API-Key"] = opts.apiKey;
+  // Bearer rather than X-API-Key to match sdk/indexer.ts: the indexer's CORS
+  // policy does not let X-API-Key through a browser preflight.
+  if (opts.apiKey) headers["Authorization"] = `Bearer ${opts.apiKey}`;
   const signal =
     typeof AbortSignal !== "undefined" && typeof AbortSignal.timeout === "function"
       ? AbortSignal.timeout(opts.timeoutMs)

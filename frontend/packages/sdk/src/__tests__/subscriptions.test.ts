@@ -431,7 +431,7 @@ describe("subscribeClaims (#392)", () => {
     ).toBe(true);
   });
 
-  it("sends X-API-Key to guarded indexer endpoints when apiKey is set", async () => {
+  it("sends Authorization: Bearer to guarded indexer endpoints when apiKey is set", async () => {
     const fetchMock = installIndexerMock({ recent: [], claims: {} });
     const stop = subscribeClaims({ wallets: [WALLET_A], apiKey: "key123" });
     await flush();
@@ -439,7 +439,9 @@ describe("subscribeClaims (#392)", () => {
 
     for (const call of fetchMock.mock.calls) {
       const init = call[1] as RequestInit | undefined;
-      expect((init?.headers as Record<string, string>)["X-API-Key"]).toBe("key123");
+      expect((init?.headers as Record<string, string>)["Authorization"]).toBe(
+        "Bearer key123",
+      );
     }
   });
 });
